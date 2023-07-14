@@ -1,0 +1,107 @@
+  //1.创建链表
+  class MyLinkedList {
+        int size;//定义大小
+        ListNode head;//定义首地址
+
+        public MyLinkedList() {
+            size = 0;
+            head = new ListNode(0);
+        }//链表初始化
+
+        public int get(int index) {
+            if (index < 0 || index >= size) {
+                return -1;
+            }
+            ListNode cur = head;
+            for (int i = 0; i <= index; i++) {
+                cur = cur.next;
+            }
+            return cur.val;
+        }//获取链表中下标为 index 的节点的值。如果下标无效，则返回 -1 。
+
+        public void addAtHead(int val) {
+            addAtIndex(0, val);
+        }// 将一个值为 val 的节点插入到链表中第一个元素之前。在插入完成后，新节点会成为链表的第一个节点。
+
+        public void addAtTail(int val) {
+            addAtIndex(size, val);
+        }// 将一个值为 val 的节点追加到链表中作为链表的最后一个元素。
+
+        public void addAtIndex(int index, int val) {
+            if (index > size) {
+                return;
+            }
+            index = Math.max(0, index);
+            size++;
+            ListNode pred = head;
+            for (int i = 0; i < index; i++) {
+                pred = pred.next;
+            }
+            ListNode toAdd = new ListNode(val);
+            toAdd.next = pred.next;
+            pred.next = toAdd;
+        }//将一个值为 val 的节点插入到链表中下标为 index 的节点之前。如果 index 等于链表的长度，那么该节点会被追加到链表的末尾。如果 index 比长度更大，该节点将 不会插入 到链表中。
+
+        public void deleteAtIndex(int index) {
+            if (index < 0 || index >= size) {
+                return;
+            }
+            size--;
+            ListNode pred = head;
+            for (int i = 0; i < index; i++) {
+                pred = pred.next;
+            }
+            pred.next = pred.next.next;
+        }// 如果下标有效，则删除链表中下标为 index 的节点。
+    }
+
+    class ListNode {
+        int val;
+        ListNode next;
+
+        public ListNode(int val) {
+            this.val = val;
+        }
+    }//链表结构
+
+    /**
+     * Your MyLinkedList object will be instantiated and called as such:
+     * MyLinkedList obj = new MyLinkedList();
+     * int param_1 = obj.get(index);
+     * obj.addAtHead(val);
+     * obj.addAtTail(val);
+     * obj.addAtIndex(index,val);
+     * obj.deleteAtIndex(index);
+     */
+    //2.二叉树的前序遍历
+    class Solution {
+        public List<Integer> preorderTraversal(TreeNode root) {
+            List<Integer> res = new ArrayList<Integer>();
+            if (root == null) {
+                return res;
+            }
+
+            TreeNode p1 = root, p2 = null;
+
+            while (p1 != null) {
+                p2 = p1.left;
+                if (p2 != null) {
+                    while (p2.right != null && p2.right != p1) {
+                        p2 = p2.right;
+                    }
+                    if (p2.right == null) {
+                        res.add(p1.val);
+                        p2.right = p1;
+                        p1 = p1.left;
+                        continue;
+                    } else {
+                        p2.right = null;
+                    }
+                } else {
+                    res.add(p1.val);
+                }
+                p1 = p1.right;
+            }
+            return res;
+        }
+    }
