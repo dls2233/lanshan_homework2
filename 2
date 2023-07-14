@@ -1,0 +1,186 @@
+import java.sql.SQLOutput;
+import java.util.Scanner;
+/*
+  实现多个英雄，都继承英雄类，都有生命值，攻击力，防御值。
+  设有攻击类接口，英雄继承此接口可进行攻击，和数据显示
+  设置三种武器，都有攻击力，防御力属性加成，选择英雄后可选择武器装备
+  装备穿戴时，会通过函数对穿戴后英雄属性进行加成
+  两英雄战斗时，根据受到的伤害=对方攻击力-自己的防御力计算
+  最终hp<=0的一方失败，同时则未平局
+*/
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("开始游戏：");
+        System.out.println("选择你的英雄(1,2,3):");
+        Hero hero;
+        int choice=scanner.nextInt();
+        if(choice==1){
+            hero=new Hero1();
+        }else if (choice==2){
+            hero=new Hero2();
+        } else{
+            hero=new Hero3();
+        }
+        System.out.println("请选择你的武器(1,2,3):");
+        Weapon weapon;
+        int k=scanner.nextInt();
+        if (k == 1) {
+            weapon = new Weapon1();
+        } else if (k==2) {
+            weapon=new Weapon2();
+        } else {
+            weapon=new Weapon3();
+        }
+        hero.equipWeapon(weapon);
+        System.out.println("请选择你的敌人(1,2,3):");
+        Hero hero_;
+        int choice_=scanner.nextInt();
+        if(choice_==1){
+            hero_=new Hero1();
+        }else if (choice_==2){
+            hero_=new Hero2();
+        } else {
+            hero_=new Hero3();
+        }
+        System.out.println("请选择你敌人的武器(1,2,3):");
+        Weapon weapon_;
+        int k_=scanner.nextInt();
+        if (k_ == 1) {
+            weapon_= new Weapon1();
+        } else if (k_==2) {
+            weapon_=new Weapon2();
+        } else {
+            weapon_=new Weapon3();
+        }
+        hero_.equipWeapon(weapon_);
+        System.out.println("战斗开始.......");
+        for(int i=0;;i++){
+            System.out.println("第"+i+"回合");
+            hero.beginAttack(hero_);
+            hero_.beginAttack(hero);
+            hero.getMessage();
+            hero_.getMessage();
+            if(hero.getHp()<=0){
+                System.out.println("你输了！");
+                break;
+            } else if (hero.getHp()<=0) {
+                System.out.println("你赢了！");
+                break;
+            }else if(hero.getHp()<=0&&hero.getHp()<=0){
+                System.out.println("平局！");
+                break;
+            }
+        }
+        System.out.println("游戏结束.......");
+    }
+
+}
+class Hero implements attack{//继承攻击类接口，可实现攻击与属性显示
+    int hp;//血量
+    int atk;//攻击力
+    int def;//防御力
+
+    public Hero(int hp, int atk, int def) {
+        this.hp = hp;
+        this.atk = atk;
+        this.def = def;
+    }
+
+    public int getHp() {
+        return hp;
+    }//查看生命值
+
+    public int getAtk() {
+        return atk;
+    }//查看攻击力
+
+    public int getDef() {
+        return def;
+    }//查看防御值
+    public void equipWeapon(Weapon weapon){
+       this.atk+=weapon.getAtk();
+       this.def+=weapon.getDef();
+    }//穿戴装备后数值变化
+
+    @Override
+    public void beginAttack(Hero hero_) {
+        getHp()= getHp()+ getDef()- hero_.getAtk();
+    }//基于防御值和敌人攻击值对我方英雄造成的伤害
+
+    @Override
+    public void getMessage() {
+        System.out.println("Hero1的血量剩余:"+getHp()+",当前攻击力为:"+getAtk()+",当前防御力为:"+getDef());
+    }//显示当前英雄的属性和状态
+
+}
+//有三个角色，有着不同的基础属性
+class Hero1 extends Hero{
+
+    public Hero1() {
+        super(12, 3,2 );
+    }
+}
+class Hero2 extends Hero{
+    public Hero2() {
+        super(8, 5, 0);
+    }
+}
+class Hero3 extends Hero{
+    public Hero3() {
+        super(10, 4, 1);
+    }
+}
+//三把武器，每把武器效果不同
+class Weapon{
+    int atk;
+    int def;
+
+    public int getAtk() {
+        return atk;
+    }
+
+    public int getDef() {
+        return def;
+    }
+
+    public Weapon(int atk, int def) {
+        this.atk = atk;
+        this.def = def;
+    }
+    void showData(){}//武器中的方法，可查看武器属性
+}
+class Weapon1 extends Weapon{
+    public Weapon1() {
+        super(3, 1);
+    }
+
+    @Override
+    void showData() {
+        System.out.println("weapon1的攻击力为："+getAtk()+",防御力为："+getDef());
+    }
+}
+class Weapon2 extends Weapon{
+    public Weapon2() {
+        super(2, 2);
+    }
+
+    @Override
+    void showData() {
+        System.out.println("weapon2的攻击力为："+getAtk()+",防御力为："+getDef());
+    }
+}
+class Weapon3 extends Weapon{
+    public Weapon3() {
+        super(1, 3);
+    }
+
+    @Override
+    void showData() {
+        System.out.println("weapon3的攻击力为："+getAtk()+",防御力为："+getDef());
+    }
+}
+interface attack{
+    void beginAttack(Hero hero_);//攻击回合
+    void getMessage();//数据显示
+}
